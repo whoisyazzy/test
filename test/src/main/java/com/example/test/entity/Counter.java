@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.example.test.entity;
 import jakarta.persistence.*;
 
 @Entity
