@@ -3,7 +3,10 @@ import com.example.test.entity.*;
 import com.example.test.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -17,19 +20,29 @@ public class CounterService {
     }
     
     public Counter savCounter(Counter counter){
+        Optional<Counter> temp = counterRepo.findByName(counter.getName());
+        if(temp.isPresent()){ throw new RuntimeException("Counter already exists");
+        }
+
+
         return counterRepo.save(counter);
     }
 
-    public List<Counter> getAllCounters(){
-        return counterRepo.findAll();
+    public Map<String, Integer> getAllCounters(){
+        Map<String, Integer> allCounters = new HashMap<>();
+        List<Counter> LCounters = counterRepo.findAll();
+        for (Counter counter : LCounters){
+            allCounters.put(counter.getName(),counter.getCount());
+        }
+        return allCounters;
     }
 
-    public Optional<Counter> getCounterbyID(Long id){
-        return counterRepo.findById(id);
+    public Optional<Counter> getCounterbyName(String name){
+        return counterRepo.findByName(name);
     }
 
-    public Counter updateCounter(Long id, Counter upd_Counter){
-        Optional<Counter> curr = counterRepo.findById(id);
+    public Counter updateCounter(String name, Counter upd_Counter){
+        Optional<Counter> curr = counterRepo.findByName(name);
         if (curr.isPresent()){
             Counter counter = curr.get();
             counter.setName(upd_Counter.getName());
@@ -42,7 +55,7 @@ public class CounterService {
         }
     }
 
-    public void deleteCounter(Long id){
-        counterRepo.deleteById(id);
+    public void deleteCounter(String name){
+        counterRepo.deleteByName(name);
     }
 }

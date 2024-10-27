@@ -5,6 +5,7 @@ package com.example.test.controller;
 import com.example.test.entity.*;
 import com.example.test.service.CounterService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,14 +36,10 @@ public class CounterController {
     }
 
 
-    //GET /counters/  - List of currently active counters in a map/dictionary format ({ "abc": 5, "xyz": 3 }) //Key:counter Values:name
+    //GET /counters/  - List of currently active counters in a map/dictionary format ({ "abc": 5, "xyz": 3 }) //Key:name Values:counter
     @GetMapping("/counters")
     public Map<String, Integer> getAllCounters() {
-        Map<String, Integer> allCounters = new HashMap<>();
-        List<Counter> LCounters = counterService.getAllCounters();
-        for (Counter counter : LCounters){
-            allCounters.put(counter.getName(),counter.getCount());
-        }
+        Map<String, Integer> allCounters = counterService.getAllCounters();
         return allCounters;
     }
     
@@ -58,7 +55,7 @@ public class CounterController {
 // - if counter exists already throw an exception
 
     @PostMapping("/counters")
-    public ResponseEntity<Counter> saveCounter(@RequestBody Counter counter) {
+    public ResponseEntity<Counter> saveCounter(@Valid @RequestBody Counter counter) {
         Counter newcounter = counterService.savCounter(counter);
         
         return ResponseEntity.ok(newcounter);
@@ -72,9 +69,9 @@ public class CounterController {
 //     - Increases a counter value by one (no body required).
 
 // - Fails if counter does not exist (404 Not found)
-    @PutMapping("counters/{id}")
-    public ResponseEntity<Counter> updateCounter(@PathVariable Long id, @RequestBody Counter counter){
-        Counter updCounter = counterService.updateCounter(id, counter);
+    @PutMapping("counters/{name}")
+    public ResponseEntity<Counter> updateCounter(@Valid @PathVariable String name, @RequestBody Counter counter){
+        Counter updCounter = counterService.updateCounter(name, counter);
         return ResponseEntity.ok(updCounter);
     }
     
@@ -83,18 +80,18 @@ public class CounterController {
 
      // DEL /counters/{counter} - Decreases a counter value by one, if value <= 0 the counter disappears.
 // - Does fail if the counter does not exist.
-    @DeleteMapping("/counters/{id}")
-    public ResponseEntity<String> deleteCounter(@PathVariable Long id){
-        counterService.deleteCounter(id);
+    @DeleteMapping("/counters/{name}")
+    public ResponseEntity<String> deleteCounter(@PathVariable String name){
+        counterService.deleteCounter(name);
         return ResponseEntity.ok("Counter deleted successfully");
     }
 
     // GET /counters/{counter}
 //     - Returns value of counter {"counter1": 5}. // - Fails if the counter does not exist (404 Not found)
 
-    @GetMapping("/counters/{id}")
-    public ResponseEntity<Counter> getCounterbyId(@PathVariable Long id) {
-        Optional<Counter> counter = counterService.getCounterbyID(id);
+    @GetMapping("/counters/{name}")
+    public ResponseEntity<Counter> getCounterbyName(@PathVariable String name) {
+        Optional<Counter> counter = counterService.getCounterbyName(name);
         return counter.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
     }
     
