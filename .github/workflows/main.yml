@@ -12,7 +12,5 @@ jobs:
     - name: Setup Java JDK
       uses: actions/setup-java@v4.5.0
 
-    - name: Install Newman
-      run: npm install -g newman
       
     
