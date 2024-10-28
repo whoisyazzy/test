@@ -1,16 +1,1 @@
-name: postman-pull-request
-on: [push, pull_request]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps: 
-    - name: Check out Git repo
-      uses: action/checkout@v1
-
-    - name: Setup Java JDK
-      uses: actions/setup-java@v4.5.0
-
-      
-    
