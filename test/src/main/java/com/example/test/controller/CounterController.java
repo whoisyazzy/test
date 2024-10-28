@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Map;
-import java.util.Optional;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,7 +65,7 @@ public class CounterController {
 
 // - Fails if counter does not exist (404 Not found)
     @PutMapping("counters/{name}")
-    public ResponseEntity<Counter> updateCounter(@Valid @PathVariable String name){
+    public ResponseEntity<Counter> incrementCounter(@Valid @PathVariable String name){
         counterService.incrementCounter(name);
         return ResponseEntity.ok().build();
     }
@@ -76,7 +76,7 @@ public class CounterController {
      // DEL /counters/{counter} - Decreases a counter value by one, if value <= 0 the counter disappears.
 // - Does fail if the counter does not exist.
     @DeleteMapping("/counters/{name}")
-    public ResponseEntity<String> deleteCounter(@PathVariable String name){
+    public ResponseEntity<String> decrementCounter(@PathVariable String name){
         counterService.decrementCounter(name);
         return ResponseEntity.ok().build();
     }

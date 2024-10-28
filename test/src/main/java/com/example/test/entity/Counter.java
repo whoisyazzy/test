@@ -3,8 +3,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "counter")
 public class Counter {
     @Id
@@ -12,6 +19,7 @@ public class Counter {
     private Long id;
     @NotBlank
     @Column(nullable = false)
+
     private String name;
 
     @PositiveOrZero
