@@ -36,8 +36,7 @@ public class CounterController {
     //GET /counters/  - List of currently active counters in a map/dictionary format ({ "abc": 5, "xyz": 3 }) //Key:name Values:counter
     @GetMapping("/counters")
     public Map<String, Integer> getAllCounters() {
-        Map<String, Integer> allCounters = counterService.getAllCounters();
-        return allCounters;
+        return counterService.getAllCounters();
     }
     
 
