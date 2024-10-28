@@ -1,8 +1,11 @@
 package com.example.test.service;
 import com.example.test.entity.*;
 import com.example.test.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,13 +22,19 @@ public class CounterService {
         this.counterRepo = counterRepo;
     }
     
-    public Counter savCounter(Counter counter){
+    public ResponseEntity<String> savCounter(Counter counter){
         Optional<Counter> temp = counterRepo.findByName(counter.getName());
-        if(temp.isPresent()){ throw new RuntimeException("Counter already exists");
+        if(temp.isPresent()){
+            throw new RuntimeException("Counter already exists");
         }
+        if(counter.getCount() == 0){
+            counter.setCount(1);
+            return ResponseEntity.ok("Counter has to be positive. It has been set to 1");
+        }
+        counterRepo.save(counter);
+        return ResponseEntity.ok().build();
 
 
-        return counterRepo.save(counter);
     }
 
     public Map<String, Integer> getAllCounters(){
@@ -37,16 +46,23 @@ public class CounterService {
         return allCounters;
     }
 
-    public Optional<Counter> getCounterbyName(String name){
-        return counterRepo.findByName(name);
+    public Map<String,Integer> getCounterbyName(String name){
+        Map <String, Integer> counter = new HashMap<>();
+        Optional <Counter> curr = counterRepo.findByName(name);
+        if (curr.isPresent()){
+        Counter counterF = curr.get();
+        counter.put(counterF.getName(),counterF.getCount());}
+        else{
+            throw new RuntimeException("Counter does not exist");
+        }
+        return counter;
     }
 
-    public Counter updateCounter(String name, Counter upd_Counter){
+    public Counter incrementCounter(String name){
         Optional<Counter> curr = counterRepo.findByName(name);
         if (curr.isPresent()){
             Counter counter = curr.get();
-            counter.setName(upd_Counter.getName());
-            counter.setCount(upd_Counter.getCount());
+            counter.setCount(counter.getCount()+1);
             return counterRepo.save(counter);
     
         } else
@@ -54,8 +70,20 @@ public class CounterService {
             throw new RuntimeException("Counter not found");
         }
     }
+    @Transactional
+    public void decrementCounter(String name){
+        Optional<Counter> curr = counterRepo.findByName(name);
+        if (curr.isPresent()){
+            Counter counter = curr.get();
+            int value = counter.getCount();
+            if (value <= 0){
+                counterRepo.deleteByName(name);
+            }
+            else{
+                counter.setCount(value-1);
+                counterRepo.save(counter);
+            }
+        } else throw new RuntimeException("Counter does not exists");
 
-    public void deleteCounter(String name){
-        counterRepo.deleteByName(name);
     }
 }

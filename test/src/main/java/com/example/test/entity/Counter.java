@@ -2,6 +2,7 @@ package com.example.test.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "counter")
@@ -13,7 +14,7 @@ public class Counter {
     @Column(nullable = false)
     private String name;
 
-    @Positive
+    @PositiveOrZero
     @Column(nullable = false)
     private int count;
 
